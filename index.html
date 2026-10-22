@@ -20,40 +20,48 @@
 <body>
   <div class="stage-host" id="host"></div>
 
-  <!-- Invitations register themselves here. Add a new <script> line per customer. -->
+  <!-- Each customer is one file in invites/, loaded on demand from ?invite=<slug>. No edits needed here. -->
 
   <script src="template/art.js"></script>
   <script src="template/invite.js"></script>
-  <script src="invites/sarah-james.js"></script>
-  <script src="invites/priya-daniel.js"></script>
   <script>
     /*
-     * ?invite=<slug>   which invitation to show (default: first registered)
+     * ?invite=<slug>   which invitation to load from invites/<slug>.js
      * ?guest=Name      pre-fill the RSVP name
      * ?stage=card      jump straight to the card (open | float | land | card)
      * ?page=0|1|2      start on invitation / details / RSVP
      */
     (function () {
       var q = new URLSearchParams(location.search);
-      var slugs = BabyInvite.list();
-      var slug = q.get('invite') || slugs[0];
+      var slug = q.get('invite') || '';
       var host = document.getElementById('host');
-      if (!BabyInvite.get(slug)) {
-        host.innerHTML = '<div class="picker"><p>We couldn’t find that invitation.</p>' +
-          slugs.map(function (s) { return '<a href="?invite=' + encodeURIComponent(s) + '">' + s + '</a>'; }).join('') + '</div>';
-        return;
+
+      function message(text) {
+        host.innerHTML = '<div class="picker"><p>' + text + '</p></div>';
       }
-      var inv = BabyInvite.mount(host, slug, {
-        guest: q.get('guest') || '',
-        stage: q.get('stage') || undefined,
-        page: q.get('page') || 0,
-        autoplay: q.get('autoplay') !== '0',
-      });
-      var c = inv.config;
-      document.title = c.pageTitle || (c.headline + ' · ' + c.honouring);
-      document.body.style.background = c.theme.skyMid;
-      document.querySelector('meta[name=theme-color]').content = c.theme.skyMid;
-      window.invitation = inv;
+      // Only plain slugs are loaded, so the query string can never pull in another file.
+      if (!/^[a-z0-9][a-z0-9-]{0,63}$/.test(slug)) {
+        return message(slug ? 'We couldn\u2019t find that invitation.' : 'Open your invitation link to see it here.');
+      }
+
+      var el = document.createElement('script');
+      el.src = 'invites/' + slug + '.js';
+      el.onerror = function () { message('We couldn\u2019t find that invitation.'); };
+      el.onload = function () {
+        if (!BabyInvite.get(slug)) return message('We couldn\u2019t find that invitation.');
+        var inv = BabyInvite.mount(host, slug, {
+          guest: q.get('guest') || '',
+          stage: q.get('stage') || undefined,
+          page: q.get('page') || 0,
+          autoplay: q.get('autoplay') !== '0',
+        });
+        var c = inv.config;
+        document.title = c.pageTitle || (c.headline.replace(/\n/g, ' ') + ' \u00b7 ' + c.honouring);
+        document.body.style.background = c.theme.skyMid;
+        document.querySelector('meta[name=theme-color]').content = c.theme.skyMid;
+        window.invitation = inv;
+      };
+      document.head.appendChild(el);
     })();
   </script>
 </body>

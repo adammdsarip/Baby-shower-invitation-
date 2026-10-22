@@ -23,7 +23,7 @@ async function test(name, fn) {
   const page = await ctx.newPage();
   const problems = [];
   page.on('pageerror', (e) => problems.push('pageerror: ' + e.message));
-  page.on('console', (m) => m.type() === 'error' && !/favicon/.test(m.text()) && problems.push('console: ' + m.text()));
+  page.on('console', (m) => m.type() === 'error' && !/favicon/.test(m.text()) && !(page.__allow && page.__allow.test(m.text())) && problems.push('console: ' + m.text()));
   const t0 = Date.now();
   try {
     await fn(page, ctx);
@@ -60,10 +60,17 @@ await test('index shows priya-daniel with only its own details', async (page) =>
 });
 
 await test('unknown invite slug shows a friendly message, no errors', async (page) => {
+  page.__allow = /404/; // the missing invites/nope.js is expected
   await page.goto(`${base}/index.html?invite=nope`);
   assert.match(await text(page, '.picker'), /couldn.t find that invitation/);
   assert.equal(await page.locator('.bi').count(), 0);
-  assert.equal(await page.locator('.picker a').count(), 2);
+});
+
+await test('index without ?invite= and with a path-like slug load nothing', async (page) => {
+  await page.goto(`${base}/index.html`);
+  assert.match(await text(page, '.picker'), /Open your invitation link/);
+  await page.goto(`${base}/index.html?invite=../package`);
+  assert.match(await text(page, '.picker'), /couldn.t find/);
 });
 
 await test('?guest= pre-fills the RSVP name', async (page) => {

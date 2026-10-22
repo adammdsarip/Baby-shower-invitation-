@@ -6,7 +6,11 @@
   "type": "module",
   "scripts": {
     "start": "node serve.mjs 8080",
-    "test": "node tests/isolation.test.mjs"
+    "test": "node tests/invites.test.mjs && node tests/isolation.test.mjs",
+    "new": "node scripts/new-invite.mjs",
+    "redirects": "node scripts/build-redirects.mjs",
+    "test:invites": "node tests/invites.test.mjs",
+    "test:isolation": "node tests/isolation.test.mjs"
   },
   "devDependencies": {
     "playwright": "^1.56.1"
