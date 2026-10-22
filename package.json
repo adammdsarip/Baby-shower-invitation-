@@ -1,0 +1,14 @@
+{
+  "name": "baby-shower-invitation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Animated, config-driven baby shower invitation template.",
+  "type": "module",
+  "scripts": {
+    "start": "node serve.mjs 8080",
+    "test": "node tests/isolation.test.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.56.1"
+  }
+}

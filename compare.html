@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <link rel="icon" href="data:,">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Template check – two invitations, one page</title>
+  <link rel="stylesheet" href="template/fonts.css">
+  <link rel="stylesheet" href="template/invite.css">
+  <style>
+    body { margin: 0; padding: 24px; background: #efe3da; display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; font-family: system-ui, sans-serif; }
+    .col { width: 390px; }
+    .col h3 { margin: 0 0 8px; font-size: 14px; color: #6b5547; }
+    .frame { width: 390px; height: 800px; border-radius: 28px; overflow: hidden; box-shadow: 0 10px 40px rgba(90, 60, 40, .3); }
+  </style>
+</head>
+<body>
+  <div class="col"><h3>sarah-james</h3><div class="frame" id="a"></div></div>
+  <div class="col"><h3>priya-daniel</h3><div class="frame" id="b"></div></div>
+  <script src="template/art.js"></script>
+  <script src="template/invite.js"></script>
+  <script src="invites/sarah-james.js"></script>
+  <script src="invites/priya-daniel.js"></script>
+  <script>
+    // Two instances of the SAME template in ONE document – used by tests/isolation.mjs.
+    var q = new URLSearchParams(location.search);
+    var opts = { autoplay: q.get('autoplay') !== '0', stage: q.get('stage') || undefined, deliver: false };
+    window.A = BabyInvite.mount(document.getElementById('a'), 'sarah-james', opts);
+    window.B = BabyInvite.mount(document.getElementById('b'), 'priya-daniel', opts);
+  </script>
+</body>
+</html>
