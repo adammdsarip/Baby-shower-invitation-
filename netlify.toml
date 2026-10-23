@@ -1,0 +1,14 @@
+# Netlify reads this automatically – nothing to fill in on the Netlify setup screen.
+[build]
+  publish = "."
+  command = "node scripts/build-redirects.mjs"   # keeps /<slug> short links in sync with invites/
+
+# Invitation pages should always show the latest edit; fonts never change.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+[[headers]]
+  for = "/template/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
