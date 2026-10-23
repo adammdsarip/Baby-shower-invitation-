@@ -41,6 +41,8 @@ npm start                                        # preview: http://localhost:808
 git add -A && git commit -m "Add Mia & Noah" && git push   # Netlify deploys
 ```
 
+`npm run links -- https://your-site.netlify.app` prints every customer and the exact link to send them.
+
 No other file needs editing: `index.html` loads `invites/<slug>.js` on demand. Use an unguessable suffix in the slug for privacy. Share `https://your-site/?invite=<slug>` or the short `https://your-site/<slug>`.
 
 What you can set (everything is optional – missing values use the defaults in `template/invite.js`):
